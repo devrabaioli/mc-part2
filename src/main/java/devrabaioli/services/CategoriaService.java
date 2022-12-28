@@ -3,10 +3,12 @@ package devrabaioli.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import devrabaioli.domain.Categoria;
 import devrabaioli.repositories.CategoriaRepository;
+import devrabaioli.services.exception.DataIntegrityException;
 import devrabaioli.services.exception.ObjectNotfoundException;
 
 @Service
@@ -30,6 +32,16 @@ public class CategoriaService {
 		find(obj.getId());
 		return repo.save(obj);
 
+	}
+
+	public void delete (Integer id) {
+		find(id);
+		try {
+		repo.deleteById(id);
+	    }
+		catch(DataIntegrityViolationException e){
+		throw new DataIntegrityException("Nao é possível excluir Categorias com produtos associados");
+		}
 	}
 
 }
